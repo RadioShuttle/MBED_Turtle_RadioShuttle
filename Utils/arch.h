@@ -48,12 +48,11 @@ struct iovec {
     size_t  iov_len;
 };
 
-
-static inline unsigned read_systicker_us(void) {
-	extern uint32_t us_ticker_read(void);	// I do not want to include us_ticker_api.h here
-
-	return us_ticker_read();
-}
+//static inline unsigned read_systicker_us(void) {
+//	extern uint32_t us_ticker_read(void);	// I do not want to include us_ticker_api.h here
+//
+//	return us_ticker_read();
+//}
 
 #define FlashFileSysMount	"Flash"
 // #define ESPFileSysMount     "ESP"
