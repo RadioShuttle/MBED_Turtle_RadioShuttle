@@ -13,7 +13,7 @@
 #include "RadioTest.h"
 
 DigitalOut statusLED(LED);
-// DigitalOut redLED(LED2);
+DigitalOut redLED(LED2);
 InterruptIn buttonIntr(USER_BUTTON);
 volatile int pressedCount;
 
