@@ -56,21 +56,6 @@ int main() {
     InitRadio();
 #endif
 
-#if 0
-	DigitalOut espVDD(ESP_POWER_SW);
-	// espVDD = ESP_POWER_OFF;
-	espVDD = ESP_POWER_ON;
-
-	// sleep_manager_unlock_deep_sleep_internal(); // from SerialBase::attach
-	DigitalIn espEN(PB_10);
-	
-	DigitalIn t1(LORA_SPI_MOSI);
-	DigitalIn t2(LORA_SPI_MISO);
-	DigitalIn t3(LORA_SPI_SCLK);
-
-	// DigitalIn io26(PB_4);
-#endif
-
 	/*
 	 * Main event loop, process interrupts and goes to sleep when idle.
 	 * the green statusLED indicates CPU activity
