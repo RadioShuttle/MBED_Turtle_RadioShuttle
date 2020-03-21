@@ -16,6 +16,9 @@
 #include "HELIOS_Si7021.h"
 #endif
 
+#if defined(TARGET_STM32L4) && MBED_MAJOR_VERSION >= 5
+ #define wait_ms(x)	wait_us(x * 1000)
+#endif
 
 enum InterruptDevice {
     INT_BUTTON1 = 0x01,	// user button
