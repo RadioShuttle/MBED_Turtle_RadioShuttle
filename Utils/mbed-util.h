@@ -15,7 +15,6 @@ extern "C" {
 #endif
 
 extern float BatteryVoltage(void);
-extern void OTPWrite(uint8_t *address, const void *d, size_t length);
 extern int CPUID(uint8_t *buf, int maxSize, uint32_t value);
 extern int AddRSLicense(void *rs, int rslen, uint32_t deviceID, uint32_t productCode);
 
