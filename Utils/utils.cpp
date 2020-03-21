@@ -22,6 +22,20 @@ USBSerialBuffered *usb;
 #endif
 bool _useDprintf;
 
+static void InitUSBClocks()
+{
+#if defined(TARGET_STM32L4) && MBED_MAJOR_VERSION >= 5
+	/*
+	 * MBed OS 5 does not init the USB clocks, therefore we need to do it here
+	 */
+    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+    /* Select MSI output as USB clock source, see system_lock.c:324  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
+    PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_MSI; /* 48 MHz */
+    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+#endif
+}
+
 void InitSerial(int timeout, DigitalOut *led, InterruptIn *intr)
 {
     _useDprintf = true;
@@ -33,6 +47,7 @@ void InitSerial(int timeout, DigitalOut *led, InterruptIn *intr)
 	DigitalIn uartRX(USBRX);
 	uartActive = uartRX.read();
     if (!uartActive) {
+        InitUSBClocks();
         usb = new USBSerialBuffered();
         Timer t;
         t.start();
