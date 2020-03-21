@@ -13,10 +13,52 @@
 	.eabi_attribute 18, 4
 	.file	"mbed-util.cpp"
 	.text
+	.section	.text.CPUID.part.0,"ax",%progbits
+	.align	1
+	.arch armv7e-m
+	.syntax unified
+	.thumb
+	.thumb_func
+	.fpu fpv4-sp-d16
+	.type	CPUID.part.0, %function
+CPUID.part.0:
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, lr}
+	ldr	r3, .L4
+	eors	r3, r3, r1
+	mov	r2, r0
+	add	r1, r0, #12
+	subs	r3, r3, r0
+.L2:
+	ldrb	r4, [r2, r3]	@ zero_extendqisi2
+	strb	r4, [r2], #1
+	cmp	r1, r2
+	bne	.L2
+	ldr	r3, .L4+4
+	ldrh	r2, [r3]
+	subs	r3, r3, #224
+	ldrh	r3, [r3]
+	and	r3, r3, #31
+	orr	r3, r3, r2, lsl #16
+	ubfx	r2, r3, #8, #8
+	strb	r3, [r0, #12]
+	strb	r2, [r0, #13]
+	ubfx	r2, r3, #16, #8
+	ubfx	r3, r3, #24, #8
+	strb	r2, [r0, #14]
+	strb	r3, [r0, #15]
+	movs	r0, #16
+	pop	{r4, pc}
+.L5:
+	.align	2
+.L4:
+	.word	1252663493
+	.word	536835552
+	.size	CPUID.part.0, .-CPUID.part.0
 	.section	.text.CPUID,"ax",%progbits
 	.align	1
 	.global	CPUID
-	.arch armv7e-m
 	.syntax unified
 	.thumb
 	.thumb_func
@@ -27,25 +69,12 @@ CPUID:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
 	cmp	r1, #15
-	ble	.L4
-	ldr	r3, .L6
-	eors	r3, r3, r2
-	subs	r3, r3, r0
-	add	r2, r0, #12
-.L3:
-	ldrb	r1, [r0, r3]	@ zero_extendqisi2
-	strb	r1, [r0], #1
-	cmp	r2, r0
-	bne	.L3
-	movs	r0, #16
-	bx	lr
-.L4:
+	ble	.L7
+	mov	r1, r2
+	b	CPUID.part.0
+.L7:
 	movs	r0, #0
 	bx	lr
-.L7:
-	.align	2
-.L6:
-	.word	1252663493
 	.size	CPUID, .-CPUID
 	.section	.text.AddRSLicense,"ax",%progbits
 	.align	1
@@ -59,64 +88,63 @@ AddRSLicense:
 	@ args = 0, pretend = 0, frame = 16
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, lr}
-	subs	r4, r0, #1
-	adds	r4, r4, #3
+	mov	r6, r3
+	subs	r3, r0, #1
+	adds	r3, r3, #3
 	sub	sp, sp, #20
-	bhi	.L15
-	mov	r4, sp
-	ldr	r6, .L22
-	ldr	r7, .L22+4
-	mov	r5, r4
-.L10:
-	mov	ip, r6
-	adds	r6, r6, #1
-	ldrb	ip, [ip]	@ zero_extendqisi2
-	strb	ip, [r4], #1
-	cmp	r6, r7
-	bne	.L10
-	ldr	r4, .L22+8
-	movs	r6, #0
+	mov	r5, r0
+	mov	r4, r1
+	mov	r7, r2
+	bhi	.L16
+	mov	r1, #1431655765
+	mov	r0, sp
+	bl	CPUID.part.0
+	subs	r1, r0, #0
+	it	lt
+	addlt	r1, r1, #3
+	ldr	r2, .L22
+	asrs	r1, r1, #2
+	movs	r3, #0
+.L12:
+	cmp	r1, r3
+	ble	.L11
+	ldr	r0, [sp, r3, lsl #2]
+	adds	r3, r3, #1
+	add	r2, r2, r0
+	b	.L12
 .L11:
-	ldr	r7, [r5], #4
-	adds	r6, r6, #1
-	cmp	r6, #4
-	add	r4, r4, r7
-	bne	.L11
-	add	r2, r2, r4
-	subs	r5, r2, r3
+	add	r2, r2, r7
+	subs	r0, r2, r6
 	it	ne
-	movne	r5, #1
-	cmp	r1, #0
+	movne	r0, #1
+	subs	r1, r4, #0
 	it	lt
 	addlt	r1, r1, #3
 	movs	r4, #0
 	asrs	r1, r1, #2
-	mov	r6, r4
-.L14:
+	mov	r3, r4
+.L15:
 	cmp	r1, r4
 	ble	.L8
-	cbz	r4, .L13
-	ldr	r7, [r0, r4, lsl #2]
-	cmp	r0, r7
-	bne	.L13
-	cmp	r2, r3
+	cbz	r4, .L14
+	ldr	r7, [r5, r4, lsl #2]
+	cmp	r5, r7
+	bne	.L14
+	cmp	r2, r6
 	it	eq
-	streq	r6, [r0, r4, lsl #2]
-.L13:
+	streq	r3, [r5, r4, lsl #2]
+.L14:
 	adds	r4, r4, #1
-	b	.L14
-.L15:
-	movs	r5, #1
+	b	.L15
+.L16:
+	movs	r0, #1
 .L8:
-	mov	r0, r5
 	add	sp, sp, #20
 	@ sp needed
 	pop	{r4, r5, r6, r7, pc}
 .L23:
 	.align	2
 .L22:
-	.word	536835472
-	.word	536835484
 	.word	-2091612265
 	.size	AddRSLicense, .-AddRSLicense
 	.global	__aeabi_ui2d
