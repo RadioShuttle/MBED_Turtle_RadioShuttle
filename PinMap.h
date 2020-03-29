@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0);
  */
 
-#ifndef XPINMAP_H
-#define XPINMAP_H
+#ifndef __XPINMAP_H__
+#define __XPINMAP_H__
 
 
 #define RS_MAJOR    3
@@ -133,4 +133,4 @@
  #error "unknown board"
 #endif
 
-#endif
+#endif // PinMap.h

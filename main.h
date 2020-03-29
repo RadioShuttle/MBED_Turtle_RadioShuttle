@@ -3,6 +3,9 @@
  * 30826 Garbsen (Hannover) Germany
  * Licensed under the Apache License, Version 2.0);
  */
+ 
+ #ifndef __MAIN_H__
+ #define __MAIN_H__
 
 #include "mbed.h"
 #include "PinMap.h"
@@ -58,3 +61,5 @@ extern void RunCommands(int timeout_ms);
 #ifdef FEATURE_SI7021
 extern HELIOS_Si7021 *sensorSI7021;
 #endif
+
+#endif // __MAIN_H__
