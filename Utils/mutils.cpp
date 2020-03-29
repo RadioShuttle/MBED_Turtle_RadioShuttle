@@ -22,6 +22,7 @@ USBSerialBuffered *usb;
 #endif
 bool _useDprintf;
 
+#ifdef FEATURE_USBSERIAL
 static void InitUSBClocks()
 {
 #if defined(TARGET_STM32L4) && MBED_MAJOR_VERSION >= 5
@@ -35,6 +36,7 @@ static void InitUSBClocks()
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 #endif
 }
+#endif
 
 void InitSerial(int timeout, DigitalOut *led, InterruptIn *intr)
 {
