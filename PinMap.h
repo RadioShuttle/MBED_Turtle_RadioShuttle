@@ -4,6 +4,10 @@
  * Licensed under the Apache License, Version 2.0);
  */
 
+#ifndef XPINMAP_H
+#define XPINMAP_H
+
+
 #define RS_MAJOR    3
 #define RS_MINOR    3
 #define MAJOR_VERSION	1
@@ -127,4 +131,6 @@
 
 #else
  #error "unknown board"
+#endif
+
 #endif
