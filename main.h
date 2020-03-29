@@ -16,6 +16,8 @@
 #include "HELIOS_Si7021.h"
 #endif
 
+#define	DPRINTF_AVAILABLE
+
 #if defined(TARGET_STM32L4) && MBED_MAJOR_VERSION >= 5
  #define wait_ms(x)	wait_us(x * 1000)
 #endif
