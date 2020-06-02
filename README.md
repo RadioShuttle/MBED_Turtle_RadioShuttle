@@ -52,8 +52,7 @@ The development is straightforward: basically compile the software, flash it ont
 - Open the RadioShuttle STM32 Utility
 - Setup an Arm Mbed account
 - Open the Online Compiler on https://www.mbed.com (alternatively open the Mbed Studio IDE)
-- Select "Import", select "Click here" and enter the URL https://github.com/RadioShuttle/MBED_Turtle_RadioShuttle
-  This will import the Turtle RadioShuttle software and its connected libraries into the project
+- Select "Import", select "Click here" and enter the URL https://github.com/RadioShuttle/MBED_Turtle_RadioShuttle. This will import the Turtle RadioShuttle software and its connected libraries into the project
 - Select the target "NUCLEO-L432KC" (this board is compatible with the Turtle board)
 - Click on "Compile". After this is done a program.bin file is ready for flashing
 - Turn the board into programming mode:
