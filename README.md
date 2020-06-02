@@ -39,7 +39,7 @@ __NOTE:__ The Turtle board is compatible with the Mbed OS target __STM32L432KC__
 - MBED_USBDeviceHT (a USB device library from Mbed OS supporting virtual COMs, buffered)
 - BufferedSerial.lib (a buffered serial implementation)
 - SX1276GenericLib: (a common driver supporting SX1276 based modules)
-- RadioShuttleLib.lib (RadioShuttle Peer-to-peer LoRa wireless protocol software)
+- RadioShuttleLib.lib (RadioShuttle peer-to-peer LoRa wireless protocol software)
 - HELIOS_Si7021.lib (a common driver supporting the Si7021 temperature and humidity sensor)
 - OLED_SSD1306.lib (a common driver for the SSD1306 based OLED displays)
 
