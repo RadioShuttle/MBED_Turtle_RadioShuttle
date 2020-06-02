@@ -1,4 +1,5 @@
 # Turtle Board Software
+![Turtle Board](/docs/Turtle_Board.png)
 The Turtle Board is a highly energy efficient LoRa peer to peer turnkey solution which runs up to 10 years on batteries. It consists of an STM32L432KC MCU with an SX1276 LoRa radio and extensive software support made by RadioShuttle developers. This repository includes the complete software required to develop solutions for the Turtle Board.
 
 Helmut Tschemernjak
