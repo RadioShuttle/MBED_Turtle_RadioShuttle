@@ -1,5 +1,7 @@
 # Turtle Board Software
+
 ![Turtle Board](/docs/Turtle_Board.png)
+
 The Turtle Board is a highly energy efficient LoRa peer to peer turnkey solution which runs up to 10 years on batteries. It consists of an STM32L432KC MCU with an SX1276 LoRa radio and extensive software support made by RadioShuttle developers. This repository includes the complete software required to develop solutions for the Turtle Board.
 
 Helmut Tschemernjak
@@ -29,7 +31,7 @@ __NOTE:__ The Turtle Board is compatible with the Mbed OS target __STM32L432KC__
  
  
  ##  Libraries utilized by the Turtle Software
- The entire Turtle Software consists of a main example applications and a dozen of referenced libraries which are automatically included when importing this URL: https://github.com/RadioShuttle/MBED_Turtle_RadioShuttle
+ The entire Turtle Software consists of a main example applications and half a dozen of referenced libraries which are automatically included when importing the project into the Mbed Compiler URL: https://github.com/RadioShuttle/MBED_Turtle_RadioShuttle
   
   The detailed file sets are:
 - Turtle example application (including main.cpp/h, PinMap.h, RadioTestSample.cpp and the Utils folder with additional support files)
