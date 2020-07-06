@@ -1,13 +1,23 @@
 /*
- * Copyright (c) 2019 Helmut Tschemernjak
- * 30826 Garbsen (Hannover) Germany
+ * Copyright (c) 2020 Helmut Tschemernjak
+ * 31515 Wunstorf (Hannover) Germany
+ * Licensed under the Apache License, Version 2.0);
  */
+
 #include "main.h"
+#ifdef  FEATURE_NVPROPERTY
+#include <NVPropertyProviderInterface.h>
+#include "NVProperty.h"
+#endif
 #include "GenericPingPong.h"
 #include "RadioTest.h"
+#include "ProgramInterface.h"
+#include <vector>
 #ifdef TOOLCHAIN_GCC
 #include <malloc.h>
 #endif
+#include <cctype> // for isspace
+
 volatile uint32_t PendingInterrupts;	// global interrupt mask of received interrupts
 
 time_t cvt_date(char const *date, char const *time);
@@ -73,6 +83,11 @@ void InitSerial(int timeout, DigitalOut *led, InterruptIn *intr)
         ser = new BufferedSerial(USBTX, USBRX);
         ser->baud(230400);
         ser->format(8);
+        /*
+		 * unlock not needed for debugging via seriel
+		 * for non debugger the UART will not be busy
+		 */
+        // sleep_manager_unlock_deep_sleep_internal();
     }
 
     time_t t = cvt_date(__DATE__, __TIME__);
@@ -462,54 +477,103 @@ MemoryAvailable(bool print)
 }
 
 
+static int setargs(char *args, char **argv)
+{
+   int count = 0;
+
+   while (isspace(*args)) // remove leading
+   	++args;
+   	
+   while (*args) {
+	 if (argv)
+	 	argv[count] = args;
+	 while (*args && !isspace(*args))
+	 	++args;
+	 if (argv && *args)
+	 	*args++ = '\0';
+	 while (isspace(*args)) // remove trailing
+	 	++args;
+	 count++;
+   }
+   return count;
+}
+
+const char **parsedargs(char *args, int *argc)
+{
+   char **argv = NULL;
+   int    argn = 0;
+
+   if (args && *args
+	&& (args = strdup(args))
+	&& (argn = setargs(args,NULL))
+	&& (argv = (char **)malloc((argn+1) * sizeof(char *)))) {
+	  *argv++ = args;
+	  argn = setargs(args,argv);
+   }
+
+   if (args && !argv)
+   	free(args);
+
+   *argc = argn;
+   return (const char **)argv;
+}
+
+void freeparsedargs(const char **av)
+{
+	char **argv = (char **)av;
+  	if (argv) {
+		free(argv[-1]);
+		free(argv-1);
+  	}
+}
+
 static const char *cmds = \
 	"\r\nThe following commands are available:\r\n\r\n" \
-	" p -- Property Editor\r\n" \
-	" t -- LoRa PingPong Test\r\n" \
-	" x -- LoRa TX Continuous Wave Test\r\n" \
-	" d -- Hexdump of memory address [offset count]\r\n"
 	" r -- Reset\r\n" \
-	" c -- Continue with RadioShuttle RadioTest\r\n" \
-	"\r\n" \
-	"waiting 10 secs ...\r\n" \
-	"\r\n";
+	" d -- Hexdump of memory address [offset count]\r\n" \
+	" h -- help for the command (e.g.: h b [help for blinky])\r\n" \
+	" q -- quit program and continue\r\n";
 
 void RunCommands(int timeout_ms) {
+	ProgramInterface *prog = NULL;
 	bool cmdLoop = true;
 	while(cmdLoop) {
 		char buf[32];
 
 		rprintf(cmds);
-		rprintf("Turtle$ ");
+
+		std::vector<ProgramInterface *>::iterator re;
+		
+		for(re = _progs.begin(); re != _progs.end(); re++) {
+			rprintf(" %c -- %s %s\r\n", (*re)->GetShortkey(), (*re)->GetName(), (*re)->GetDescription());
+		}
+		rprintf(" c -- Continue with default program\r\n");
+		rprintf("\r\nwaiting 10 secs ...\r\n\r\n");
+
+		if (prog)
+			rprintf("%s$ ", prog->GetName());
+		else
+			rprintf("Turtle$ ");
+			
 		if (ConsoleReadline(buf, sizeof(buf), true, timeout_ms) == NULL) {
 			cmdLoop = false;
 			break;
 		}
+
 		switch(buf[0]) {
-			case 'p':
-			case 'P':
-#ifdef FEATURE_NVPROPERTYEDITOR
-				NVPropertyEditor();
-#endif
-			break;
-			case 't':
-			case 'T':
-#ifdef FEATURE_LORA_PING_PONG
-    			SX1276PingPong();	// basic LoRa raw ping/pong without RadioShuttle
-#endif
+			case 'c':
+				cmdLoop = false;
 				break;
-#ifdef FEATURE_RADIOTESTSAMPLE
-			case 'x':
-			case 'X':
-				RadioContinuesTX();
-#endif
+			case 'q':
+				if (prog) {
+					prog->Shutdown();
+					prog = NULL;
+				}
 				break;
 			case 'r':
-			case 'R':
 				MCUReset();
 				break;
 			case 'd':
-			case 'D':
 				{
 					char *addr = strchr(buf, ' ');
 					if (addr) {
@@ -526,14 +590,78 @@ void RunCommands(int timeout_ms) {
 					}
 				}
 				break;
-			case 'c':
-			case 'C':
-				cmdLoop = false;
+			case 'h':
+				{
+					for(re = _progs.begin(); re != _progs.end(); re++) {
+						if (buf[2] == (*re)->GetShortkey()) {
+							rprintf("\r\nHelp for %s:\r\n\r\n\%s", (*re)->GetName(), (*re)->GetHelpText());
+							rprintf("\r\nenter to continue...");
+							ConsoleReadline(buf, sizeof(buf), true, 0);
+							break;
+						}
+					}
+				}
 				break;
 			default:
+				if (prog == NULL) {
+					for(re = _progs.begin(); re != _progs.end(); re++) {
+						if (buf[0] ==  (*re)->GetShortkey()) {
+							prog = (*re);
+							rprintf("\r\nStarting: %s\r\n", prog->GetName());
+							const char **av;
+							int ac;
+							av = parsedargs((char *)buf, &ac);
+							prog->Startup(ac, av);
+							ProgramInterface::ExecuteType ret = (ProgramInterface::ExecuteType) prog->ExecuteCommand();
+							if (ret == ProgramInterface::E_TYPE_QUIT) {
+								prog->Shutdown();
+								freeparsedargs(av);
+								prog = NULL;
+							} else if (ret == ProgramInterface::E_TYPE_RESUME_CONT_COMMAND) {
+								
+							} else if (ret == ProgramInterface::E_TYPE_RESUME_LEAVE_COMMAND) {
+								cmdLoop = false;
+								break;
+							} else {
+								dprintf("invalid return vakue from ExecuteCommand()");
+							}
+						}
+					}
+				}
 				break;
 		}
 	}
 	rprintf("\r\n");
 
+#ifdef  FEATURE_NVPROPERTY
+	if (prog == NULL) {
+		{
+			NVProperty prop;
+			const char *PropCmd = prop.GetProperty(prop.PROG_CMDLINE, (const char *)NULL);
+			if (PropCmd)
+				defCmdLine = PropCmd;
+		}
+	}
+#endif
+	if (prog == NULL) {
+		std::vector<ProgramInterface *>::iterator re;
+		for(re = _progs.begin(); re != _progs.end(); re++) {
+			if (*defCmdLine ==  (*re)->GetShortkey()) {
+				prog = (*re);
+				rprintf("\r\nStarting: %s\r\n", prog->GetName());
+				const char **av;
+				int ac;
+				av = parsedargs((char *)defCmdLine, &ac);
+				prog->Startup(ac, av);
+				ProgramInterface::ExecuteType ret = (ProgramInterface::ExecuteType)prog->ExecuteCommand();
+				if (ret == ProgramInterface::E_TYPE_QUIT) {
+					prog->Shutdown();
+					freeparsedargs(av);
+					prog = NULL;
+				}
+			}
+		}
+		if (prog == NULL)
+			dprintf("Warning, default program: %s not found", defCmdLine);
+	}
 }
