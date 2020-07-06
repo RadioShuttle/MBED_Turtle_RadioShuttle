@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2019 Helmut Tschemernjak
- * 30826 Garbsen (Hannover) Germany
+ * Copyright (c) 2020 Helmut Tschemernjak
+ * 31515 Wunstorf (Hannover) Germany
  * Licensed under the Apache License, Version 2.0);
  */
  
@@ -31,6 +31,10 @@ enum InterruptDevice {
     INT_UNUSED2 = 0x04,
     INT_LORA    = 0x08,	// LoRa needs to stay on 0x08
 	INT_TIMEOUT	= 0x10, // Low power timer timeout
+	INT_TIMEOUT2= 0x20, // Low power timer timeout
+	INT_TIMEOUT3= 0x40, // Low power timer timeout
+	INT_BUTTON_GRP1 = 0x80,
+	INT_BUTTON_GRP2 = 0x100,
 };
 
 extern volatile uint32_t PendingInterrupts;
@@ -54,9 +58,6 @@ extern void dprintf(const char *format, ...) __attribute__((format(printf,1,2)))
 extern void rprintf(const char *format, ...) __attribute__((format(printf,1,2)));
 extern void VAprintf(bool timstamp, bool newline, bool printEnabled, const char *format, va_list arg);
 extern char *ConsoleReadline(char *buf, int buflen, bool echo, int timeout_ms = 0);
-extern void NVPropertyEditor(void);
-extern void MCUReset(void);
-extern void RunCommands(int timeout_ms);
 
 #ifdef FEATURE_SI7021
 extern HELIOS_Si7021 *sensorSI7021;
