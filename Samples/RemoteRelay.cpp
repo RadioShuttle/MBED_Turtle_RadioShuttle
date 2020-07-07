@@ -72,10 +72,10 @@ RemoteRelay::Startup(int argc, const char *argv[])
 		
 	MBED_ASSERT(inPins.size() <= MAX_RLEAY_CHANNEL);
 
+	lastKnownPinStatus = 0xffff;
 	int cnt = 0;
     for(PinName n : inPins) {
 		if (isServer()) {
-			lastKnownPinStatus = 0xffff;
 			DigitalIn pinIn(n);
 		} else {
 			pinIntr[cnt] = new InterruptIn(n);
@@ -84,7 +84,6 @@ RemoteRelay::Startup(int argc, const char *argv[])
 			pinIntr[cnt]->rise(callback(this, &RemoteRelay::IntFunc));
 			cnt++;
 		}
-        // std::cout << n << '\n';
     }
 	timeout = new LowPowerTimeout;
 	ledSignalTimer = NULL;
@@ -186,6 +185,10 @@ RemoteRelay::RelayUpdate(bool keyPressed, bool statusUpdateTimer)
 		relayData.battery_mV = BatteryVoltage() * 100;
 	}
 	
+	if (relayData.flags == UPDATE_STATE && relayData.pinStatus == lastKnownPinStatus)
+		return false; // no timer/button event, same result, nothing to do.
+	dprintf("ServerRelayUpdate: lastKnownPinStatus: 0x%x newpins: 0x%x", lastKnownPinStatus, relayData.pinStatus);
+	lastKnownPinStatus = relayData.pinStatus;
 	
 	int flags = 0;
 	flags |= RadioShuttle::MF_NeedsConfirm;  // optional
