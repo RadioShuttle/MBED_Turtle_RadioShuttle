@@ -5,7 +5,7 @@
  */
 
 #include "mbed.h"
-#include "PinMap.h"
+#include "xPinMap.h"
 
 #if defined(FEATURE_LORA) && defined(FEATURE_RADIOTESTSAMPLE)
 

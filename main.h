@@ -8,7 +8,7 @@
  #define __MAIN_H__
 
 #include "mbed.h"
-#include "PinMap.h"
+#include "xPinMap.h"
 #include "BufferedSerial.h"
 #ifdef FEATURE_USBSERIAL
 #include "USBSerialBuffered.h"

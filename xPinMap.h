@@ -7,7 +7,6 @@
 #ifndef __XPINMAP_H__
 #define __XPINMAP_H__
 
-#include "hal/pinmap.h"	// to overcome case in sensitive file systems
 
 #define RS_MAJOR    3
 #define RS_MINOR    3
