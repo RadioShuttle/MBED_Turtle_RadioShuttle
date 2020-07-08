@@ -8,8 +8,8 @@
 #define __XPINMAP_H__
 
 
-#define RS_MAJOR    3
-#define RS_MINOR    3
+#define RS_MAJOR    4
+#define RS_MINOR    0
 #define MAJOR_VERSION	1
 #define MINOR_VERSION	1
 
