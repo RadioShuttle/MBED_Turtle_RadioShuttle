@@ -108,10 +108,10 @@ RadioTestNew::RadioUpdate(bool keyPressed)
             flags |= RadioShuttle::MF_Encrypted;
         if (isServer()) {
             static const char msg[] = "The server feels very good today";
-            rs->SendMsg(myAppID, (void *)msg, sizeof(msg), flags, remoteDeviceID);
+            rs->SendMsg(myAppID, (void *)msg, sizeof(msg)-1, flags, remoteDeviceID);
         } else {
             static const char msg[] = "Hello, the temperature is 26 celsius";
-            rs->SendMsg(myAppID, (void *) msg, sizeof(msg), flags, remoteDeviceID);
+            rs->SendMsg(myAppID, (void *) msg, sizeof(msg)-1, flags, remoteDeviceID);
         }
         wasActive = true;
     }
