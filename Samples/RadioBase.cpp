@@ -38,7 +38,6 @@ static void TempSensorRecvHandlerNew(int AppID, RadioShuttle::devid_t stationID,
         case RadioShuttle::MS_SentTimeout:		// A timeout occurred, number of retries exceeded
             dprintf("MSG_SentTimeout ID: %d", msgID);
             break;
-
         case RadioShuttle::MS_RecvData:			// a simple input message
             dprintf("MSG_RecvData ID: %d, len=%d", msgID, length);
             // dump("MSG_RecvData", buffer, length);
@@ -56,7 +55,6 @@ static void TempSensorRecvHandlerNew(int AppID, RadioShuttle::devid_t stationID,
         case RadioShuttle::MS_AuthenicationRequired: // the password does not match.
             dprintf("MSG_AuthenicationRequired");
             break;
-
         case RadioShuttle::MS_StationConnected:	// a confirmation that the connection was accepted
             dprintf("MSG_StationConnected");
             break;
@@ -120,17 +118,10 @@ RadioBase::InitRadio(RadioShuttle::AppRecvHandler appHandler, int myappid)
 	err = rs->RegisterApplication(myAppID, appHandler,  (void *)appPassword);
 	CHECK_ERROR_RET("RegisterApplication", err);
 	
-	if (isServer()) {
-		// usually RadioShuttle::RS_Station_Basic, set via properties
-		err = rs->Startup(radioTypeMode);
-		dprintf("Startup as a Server: %s ID=%d", rs->GetRadioName(rs->GetRadioType()), myDeviceID);
-	} else {
-		// usually RadioShuttle::RS_Node_Online or RadioShuttle, set via properties
-		err = rs->Startup(radioTypeMode);
-		dprintf("Startup as a Node: %s ID=%d", rs->GetRadioName(rs->GetRadioType()), myDeviceID);
-		if (!err && rs->AppRequiresAuthentication(myAppID) == RS_PasswordSet) {
-			err = rs->Connect(myAppID, remoteDeviceID);
-		}
+	err = rs->Startup(radioTypeMode);
+	dprintf("Startup as a %s: %s ID=%d", isServer() ? "Server" : "Node",  rs->GetRadioName(rs->GetRadioType()), myDeviceID);
+	if (!err && !isServer() && rs->AppRequiresAuthentication(myAppID) == RS_PasswordSet) {
+		err = rs->Connect(myAppID, remoteDeviceID);
 	}
 	CHECK_ERROR_RET("Startup", err);
 	return 0;
