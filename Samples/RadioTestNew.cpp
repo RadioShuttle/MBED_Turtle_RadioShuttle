@@ -133,7 +133,6 @@ RadioTestNew::MessageRecvHandler(int AppID, RadioShuttle::devid_t stationID, int
         case RadioShuttle::MS_SentTimeout:		// A timeout occurred, number of retries exceeded
             dprintf("MSG_SentTimeout ID: %d", msgID);
             break;
-
         case RadioShuttle::MS_RecvData:			// a simple input message
             dprintf("MSG_RecvData ID: %d, len=%d", msgID, length);
             // dump("MSG_RecvData", buffer, length);
