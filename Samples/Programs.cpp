@@ -18,10 +18,13 @@
 #include "PanicButton.h"
 #include "RemoteRelay.h"
 #include "RemoteTempSensor.h"
+#include "CPUBench.h"
 
 std::vector<ProgramInterface *> _progs;	// list off all apps.
 
 const char *defCmdLine = "n"; // default prog
+
+static CPUBench bench;
 
 #ifdef FEATURE_NVPROPERTYEDITOR
 static NVPEditor myEditor;
