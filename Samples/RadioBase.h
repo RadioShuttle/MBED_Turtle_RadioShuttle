@@ -18,7 +18,7 @@ public:
 	void InitLoRaChip(void);
 	int RadioUpdate(bool keyPressed);
 	void InitLoRaChipWithShutdown(void);
-	void RadioContinuesTX(void);
+	void RadioContinuousTX(void);
 	bool isServer() {
 		if (radioTypeMode >= RadioShuttle::RS_Station_Basic)
 			return true;

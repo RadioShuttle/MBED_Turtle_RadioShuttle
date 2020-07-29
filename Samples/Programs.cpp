@@ -13,7 +13,7 @@
 #include "Blinky.h"
 #include "NVPEditor.h"
 #include "LoRaPingPong.h"
-#include "RadioContiunesTX.h"
+#include "RadioContinuousTX.h"
 #include "RadioTestNew.h"
 #include "PanicButton.h"
 #include "RemoteRelay.h"
@@ -35,7 +35,7 @@ static LoRaPingPong myPingPong;
 #endif
 
 #ifdef FEATURE_LORA
-static RadioContiunesTX myLoRaTXwave;
+static RadioContinuousTX myLoRaTXwave;
 static Blinky myblinky;
 static RadioTestNew myRadioTest;
 static PanicButton myPanicButton;

@@ -225,7 +225,7 @@ RadioBase::InitLoRaChipWithShutdown(void)
 
 
 void
-RadioBase::RadioContinuesTX(void)
+RadioBase::RadioContinuousTX(void)
 {
 
 	InitSettings();

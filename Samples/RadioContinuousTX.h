@@ -5,9 +5,9 @@
  */
  
 
-class RadioContiunesTX : public RadioBase, public ProgramInterface {
+class RadioContinuousTX : public RadioBase, public ProgramInterface {
 public:
-	RadioContiunesTX();
+	RadioContinuousTX();
 	void Startup(int argc, const char *argv[]);
 	void Shutdown(void);
 	bool Service(uint32_t pendirqs);

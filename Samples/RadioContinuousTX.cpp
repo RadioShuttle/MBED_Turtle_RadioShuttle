@@ -12,39 +12,39 @@
 
 #include "ProgramInterface.h"
 #include "RadioBase.h"
-#include "RadioContiunesTX.h"
+#include "RadioContinuousTX.h"
 
-RadioContiunesTX::RadioContiunesTX() : ProgramInterface(this)
+RadioContinuousTX::RadioContinuousTX() : ProgramInterface(this)
 {
-	SetName('w', "RadioContiunesTX", "LoRa radio continues wave TX test");
+	SetName('w', "RadioContinuousTX", "LoRa radio continues wave TX test");
 }
 
 void
-RadioContiunesTX::Startup(int argc, const char *argv[])
+RadioContinuousTX::Startup(int argc, const char *argv[])
 {
 	isActive = true;
 }
 
 void
-RadioContiunesTX::Shutdown(void)
+RadioContinuousTX::Shutdown(void)
 {
 	isActive = false;
 }
 
 int
-RadioContiunesTX::ExecuteCommand(void)
+RadioContinuousTX::ExecuteCommand(void)
 {
-	RadioContinuesTX();
+	RadioContinuousTX();
 	return E_TYPE_QUIT; // leave command loop
 }
 
 bool
-RadioContiunesTX::Service(uint32_t pendirqs)
+RadioContinuousTX::Service(uint32_t pendirqs)
 {
 	return false;
 }
 
 void
-RadioContiunesTX::BlinkkUpdate()
+RadioContinuousTX::BlinkkUpdate()
 {
 }
