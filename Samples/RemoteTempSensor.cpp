@@ -12,6 +12,10 @@
 #include "RadioSecurity.h"
 
 #include "RadioBase.h"
+#ifdef  FEATURE_NVPROPERTY
+#include <NVPropertyProviderInterface.h>
+#include "NVProperty.h"
+#endif
 #include "RemoteTempSensor.h"
 
 const char * RemoteTempSensor::helpText = \
@@ -26,6 +30,7 @@ const char * RemoteTempSensor::helpText = \
 	"\r\nClient property settings:\r\n" \
 	"  s12=xxx (LORA_REMOTE_ID of the server board\r\n" \
 	"  s14=1   (LORA_RADIO_TYPE set to RS_Node_Offline, or 3 = RS_Node_Online)\r\n" \
+	"  s91=30  (optional: SENSOR_INTERVAL to specify the periodic measure interval)\r\n" \
 	"\r\nServer property settings:\r\n" \
 	"  s14=4   (LORA_RADIO_TYPE set to RS_Station_Basic)\r\n" \
 	"";
@@ -54,6 +59,18 @@ RemoteTempSensor::Startup(int argc, const char *argv[])
 	else
 		useASCIIMSG = false;
 
+	sensor_interval = SENSOR_INTERVAL_SECS;
+	sensor_threshold = 0;
+#ifdef  FEATURE_NVPROPERTY
+	NVProperty prop;
+	int value;
+	value = prop.GetProperty(prop.SENSOR_INTERVAL, 0);
+	if (value)
+		sensor_interval = value;
+	value = prop.GetProperty(prop.SENSOR_THRESHOLD, 0);
+	if (value)
+		sensor_threshold = value;
+#endif
 	isActive = true;
 	if (InitRadio(&TempSensorRecvHandlerNew, SENSOR_APP_ID) != 0)
 		exit(1);
@@ -89,7 +106,7 @@ int
 RemoteTempSensor::ExecuteCommand(void)
 {
 	if (!isServer())
-		timeout->attach_us(callback(this, &RemoteTempSensor::SensorUpdateTimeoutFunc), SENSOR_INTERVAL_SECS * 1e6);
+		timeout->attach_us(callback(this, &RemoteTempSensor::SensorUpdateTimeoutFunc), sensor_interval * 1e6);
 		
 	return E_TYPE_RESUME_LEAVE_COMMAND; // leave command loop
 }
@@ -168,7 +185,7 @@ RemoteTempSensor::SensorUpdateTimeoutFunc(void)
 	 * that the Service() routing gets called on user level from the main loop.
 	 */
 	InterruptMSG(INT_TIMEOUT);
-	timeout->attach_us(callback(this, &RemoteTempSensor::SensorUpdateTimeoutFunc), SENSOR_INTERVAL_SECS * 1e6);
+	timeout->attach_us(callback(this, &RemoteTempSensor::SensorUpdateTimeoutFunc), sensor_interval * 1e6);
 }
 
 void

@@ -35,6 +35,8 @@ private:
 	LowPowerTimeout *timeout;
 	LowPowerTimeout *ledSignalTimer;
 	DigitalOut *ledStatus;
+	int sensor_interval;
+	int sensor_threshold;
 
 	static const int SENSOR_APP_ID = 1;
 	static const int TEMP_SENSOR_DATA_MAGIC = 0x55;
