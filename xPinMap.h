@@ -9,7 +9,7 @@
 
 
 #define RS_MAJOR    4
-#define RS_MINOR    0
+#define RS_MINOR    2
 #define MAJOR_VERSION	1
 #define MINOR_VERSION	1
 
