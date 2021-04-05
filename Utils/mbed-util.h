@@ -8,7 +8,7 @@
 #ifndef __MBED_UTIL_H__
 #define __MBED_UTIL_H__
 
-
+#include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {

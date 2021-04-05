@@ -19,6 +19,8 @@
 
 #include <mbed_assert.h>
 #include <mbed_debug.h>
+#include <cstdint>
+#include <cstdlib>
 
 #ifdef TARGET_DEBUG
 #define DEBUG 1
